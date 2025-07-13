@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  ra-agents:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ra-agents
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app  # Mount local project files into container
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]  # 👈 This tells Docker to use the GPU
+    runtime: nvidia

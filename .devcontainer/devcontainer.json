@@ -1,0 +1,30 @@
+{
+  "name": "Multi-Agent Research Assistant",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "settings": {
+    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "python.analysis.extraPaths": [
+      "${workspaceFolder}/agents",
+      "${workspaceFolder}/paper_search"
+    ]
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}/agents:${workspaceFolder}/paper_search"
+  },
+  "extensions": [
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "ms-azuretools.vscode-docker"
+  ],
+  "mounts": [
+    "source=${localWorkspaceFolder}/.env,target=/app/.env,type=bind"
+  ],
+  "runArgs": [
+    "--gpus=all"
+  ],
+  "forwardPorts": [8000],
+  "postCreateCommand": "pip install -r requirements.txt && echo 'PYTHONPATH=/workspaces/ra-agents/agents:/workspaces/ra-agents/paper_search' >> /etc/environment"
+}
