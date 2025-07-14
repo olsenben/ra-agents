@@ -1,6 +1,6 @@
 # Multi-Agent Research Assistant System
 
-An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers — generating structured reviews, identifying thematic contradictions, and proposing follow-up experiments.
+An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers — generating structured summaries, identifying thematic contradictions, and proposing follow-up experiments.
 
 ## Project Goals
 
@@ -11,16 +11,23 @@ An autonomous LLM-powered agent team designed to extract, cluster, and reason ov
 ## System Overview
 
 This system uses a team of large language model agents:
-- `ExtractorAgent`: parses raw papers (PDF/HTML/text) into structured JSON (title, abstract, methods, results)
-- `ClusteringAgent`: identifies topic clusters or conflicting findings
+- `ExtractorAgent`: summarizes papers requested from semantic scholar API (I requested my own API key but publics keys are available)
+- `ClusteringAgent`: identifies topic clusters and conflicting findings
 - `HypothesisAgent`: generates new questions or experimental ideas
 
-Each agent runs independently, shares memory, and collaborates via a central controller.
+Each agent runs independently and collaborates via a central controller.
 
 ## Technologies
 
-- **LLM Backend**: OpenAI GPT-4 or Claude 3
-- **Orchestration**: LangChain (or AutoGen / CrewAI)
-- **Memory Store**: FAISS or ChromaDB
+- **LLM Backend**: OpenAI GPT-4
+- **Orchestration**: Custom
+- **Memory Store**: None for now
 - **Containerization**: Docker
-- **Frontend (optional)**: Streamlit, Gradio, or FastAPI
+- **Backend**: FastAPI
+- **Frontend**: Streamlit
+
+
+## RUN
+run API ```uvicorn app.api:app --host 0.0.0.0 --port 8000```
+launch streamlit ```cd frontend``` then ```streamlit run streamlit_app.py``` then navigate to ```http://localhost:8501/```
+
