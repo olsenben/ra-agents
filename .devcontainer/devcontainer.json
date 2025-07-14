@@ -9,7 +9,8 @@
     "python.analysis.extraPaths": [
       "${workspaceFolder}/agents",
       "${workspaceFolder}/paper_search",
-      "${workspaceFolder}/app"
+      "${workspaceFolder}/app",
+      "${workspaceFolder}/frontend"
     ]
   },
   "containerEnv": {

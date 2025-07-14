@@ -7,21 +7,29 @@ def generate_hypothesis(cluster_data: dict) -> dict:
     returns a list of suggested follow-up research questions or hypothesis.
     """
     
-    theme_summaries = cluster_data.get("clusters",{}).get("theme_summaries","")
-    contradictions = cluster_data.get("clusters",{}).get("contradictions","")
+    contradictions = cluster_data.get("contradictions","")
 
-    prompt = f"""
-You are a scientific researcher assistant. Given the following thematic summary of several scientific papers
-and a list of contradictions or gaps, suggest 3–5 specific follow-up research questions or hypotheses 
-that could help address unresolved issues, validate uncertain findings, or build on promising directions.
-Please directly reference authors and claims to support suggestions. 
+    theme_summaries = []
 
-### Thematic Summaries:
-{theme_summaries}
+    for cluster in cluster_data.get('clusters', []):
+        theme_summaries.append(
+            f"Title: {cluster['theme']}\n"
+            f"Authors: {cluster['summary']}\n"
+            f"Summary: {cluster['papers']}\n"
+        )
 
-### Contradictions or Gaps:
-{contradictions}
-"""
+    prompt = (
+        "You are a scientific research assistant.\n\n"
+        "Below are the thematic summaries of several scientific papers and a list of contradictions or gaps in findings.\n"
+        "Suggest 3–5 specific follow-up research questions or hypotheses based on these summaries.\n"
+        "These suggestions should aim to address unresolved issues, validate uncertain findings, or build on promising directions.\n"
+        "Please directly reference authors and claims to support your suggestions.\n\n"
+        "### Thematic Summaries:\n"
+        + "\n\n".join(theme_summaries) +
+        "\n\n### Contradictions or Gaps:\n"
+        + "\n\n".join(contradictions)
+    )
+
     
     messages = [
         {"role": "system", "content": "You are an assistant that extracts scientific insights."},

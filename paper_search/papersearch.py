@@ -1,10 +1,19 @@
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+api_key = os.getenv("KEEPA_API_KEY")
+
 
 BASE_URL = 'https://api.semanticscholar.org/graph/v1'
 SEARCH_ENDPOINT = f'{BASE_URL}/paper/search'
 
 #fields to match what agents needs
 FIELDS = 'title,abstract,url,authors'
+
+HEADERS = {"x-api-key": api_key}
 
 def search_papers(query, limit = 10):
     """
@@ -18,7 +27,7 @@ def search_papers(query, limit = 10):
         "fields": FIELDS
     }
 
-    response = requests.get(SEARCH_ENDPOINT, params=params)
+    response = requests.get(SEARCH_ENDPOINT, params=params, headers=HEADERS)
     response.raise_for_status()
 
     papers = response.json().get("data", [])

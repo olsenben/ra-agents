@@ -1,3 +1,5 @@
+import re
+from difflib import get_close_matches
 from agents.utils import call_gpt4
 
 def cluster_papers(paper_summaries: list[dict]) -> dict:
@@ -20,38 +22,71 @@ def cluster_papers(paper_summaries: list[dict]) -> dict:
             f"Summary: {s['summary']}\n"
         )
 
+        # Create prompt for GPT
     prompt = (
-        "You are a research analyst reviewing scientific paper summaries. "
-        "Group the papers into thematic clusters based on their summaries. "
-        "Label each cluster and list the papers (with authors) under each. "
-        "Then identify any contradictions or disagreements across the summaries.\n\n"
-        "Return two sections:\n"
-        "1. Theme Clusters\n2. Contradictions or Gaps in Findings\n\n"
+        "You are a research analyst reviewing scientific papers. Group them into clusters based on shared themes.\n\n"
+        "For each cluster:\n"
+        "1. Provide a short title summarizing the theme\n"
+        "2. Summarize the theme in 1-2 sentences\n"
+        "3. List the titles of the papers in the cluster\n\n"
+        "After the clusters, identify any contradictions or gaps you observed across the papers.\n\n"
         "Here are the papers:\n\n"
         + "\n\n".join(formatted_summaries)
     )
 
-    
     messages = [
-        {"role" : "system", "content": "You are an assistant that clusters scientific papers by topic."},
-        {"role" : "user", "content" : prompt}
+        {"role": "system", "content": "You are an assistant that clusters scientific papers by topic."},
+        {"role": "user", "content": prompt}
     ]
 
-    result =  call_gpt4(messages)
-    full_output = result.strip()
+    result = call_gpt4(messages).strip()
 
-    if "Contradictions" in full_output:
-        theme_part, contradiction_part = full_output.split("Contradictions", 1)
-        theme_part = theme_part.replace("Theme Clusters", "").strip()
-        contradiction_part = contradiction_part.replace("Contradictions", "").strip()
-    else:
-        theme_part = full_output
-        contradiction_part = "No contradictions were found or specified"
+    # -------------------------------
+    # Parse GPT response
+    # -------------------------------
 
+    # Sample expected format:
+    # ### Cluster 1: Immune Response Mechanisms
+    # Summary: These papers discuss...
+    # Papers:
+    # - Title A
+    # - Title B
+
+    clusters = []
+    cluster_blocks = re.split(r"(?=### Cluster \d+:)", result)
+
+    contradiction_text = ""
+    if "Contradictions" in cluster_blocks[-1]:
+        *cluster_blocks, contradiction_text = cluster_blocks
+
+    for block in cluster_blocks:
+        theme_match = re.search(r"### Cluster \d+: (.+)", block)
+        summary_match = re.search(r"Summary: (.+?)\n(?:Papers|Paper Titles|–|—)", block, re.DOTALL)
+        titles_match = re.findall(r"- (.+)", block)
+
+        if not (theme_match and summary_match and titles_match):
+            continue
+
+        theme = theme_match.group(1).strip()
+        summary = summary_match.group(1).strip()
+        paper_titles = [t.strip() for t in titles_match]
+
+        # Match back to original papers
+        matched_papers = []
+        for title in paper_titles:
+            # Fuzzy match to handle slight GPT variation
+            match = get_close_matches(title, [p["title"] for p in paper_summaries], n=1, cutoff=0.7)
+            if match:
+                matched = next(p for p in paper_summaries if p["title"] == match[0])
+                matched_papers.append(matched)
+
+        clusters.append({
+            "theme": theme,
+            "summary": summary,
+            "papers": matched_papers
+        })
 
     return {
-        "clusters" : {
-            "theme_summaries" : theme_part,
-            "contradictions" : contradiction_part
-        }
+        "clusters": clusters,
+        "contradictions": [contradiction_text.strip()] if contradiction_text else []
     }
