@@ -1,8 +1,4 @@
 fastapi
 uvicorn[standard]
 openai
-langchain
-httpx
-python-dotenv
-pydantic
-scikit-learn
+requests

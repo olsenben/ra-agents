@@ -6,10 +6,10 @@ SEARCH_ENDPOINT = f'{BASE_URL}/paper/search'
 #fields to match what agents needs
 FIELDS = 'title,abstract,url,authors'
 
-def search_papers(query: str, limit: int = 10) -> list[dict]:
+def search_papers(query, limit = 10):
     """
     Search Semantic Scholar for papers matching a topic. 
-    REturns list of papers with title, abstract, url and authors. 
+    REturns list of papers dicts with title, abstract, url and authors. 
     """
 
     params = {

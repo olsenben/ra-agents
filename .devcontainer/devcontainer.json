@@ -5,14 +5,15 @@
     "context": ".."
   },
   "settings": {
-    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "python.defaultInterpreterPath": "/usr/local/bin/python",
     "python.analysis.extraPaths": [
       "${workspaceFolder}/agents",
-      "${workspaceFolder}/paper_search"
+      "${workspaceFolder}/paper_search",
+      "${workspaceFolder}/app"
     ]
   },
-  "terminal.integrated.env.linux": {
-    "PYTHONPATH": "${workspaceFolder}/agents:${workspaceFolder}/paper_search"
+  "containerEnv": {
+    "PYTHONPATH": "/workspaces/ra-agents"
   },
   "extensions": [
     "ms-python.python",
@@ -22,9 +23,7 @@
   "mounts": [
     "source=${localWorkspaceFolder}/.env,target=/app/.env,type=bind"
   ],
-  "runArgs": [
-    "--gpus=all"
-  ],
   "forwardPorts": [8000],
-  "postCreateCommand": "pip install -r requirements.txt && echo 'PYTHONPATH=/workspaces/ra-agents/agents:/workspaces/ra-agents/paper_search' >> /etc/environment"
+  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt"
 }
+

@@ -16,7 +16,7 @@ Abstract: {abstract}
 
     output = call_gpt4(messages)
     return {
-        'Title' : title,
+        'title' : title,
         "abstract" : abstract,
         "url" : url, 
         "summary" : output

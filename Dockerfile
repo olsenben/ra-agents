@@ -1,41 +1,30 @@
-#base image 
-FROM nvidia/cuda:12.2.0-base-ubuntu20.04
+FROM python:3.10-slim
 
-#set env variables
-# Don't generate .pyc files
-ENV PYTHONDONTWRITEBYTECODE=1 
-  # Ensure stdout is flushed 
-ENV PYTHONUNBUFFERED=1       
-ENV DEBIAN_FRONTEND=noninteractive
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive
 
-#set working dir
+# Set working directory
 WORKDIR /app
 
-#install system packages
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-dev \
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    git \
-    wget \
     curl \
-    && apt-get clean
+    git \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-#create sym;ink for python command
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-#upgrade pip and install python packages 
-COPY requirements.txt . 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt 
-
-#copy project files into container
+# Copy source code
 COPY . .
 
-#expose port for FASTAPI
+# Expose port for FastAPI
 EXPOSE 8000
 
-#default command 
+# Start FastAPI app via Uvicorn
 CMD ["uvicorn", "controllers.agent_orchestrator:app", "--host", "0.0.0.0", "--port", "8000"]
 

@@ -1,12 +1,26 @@
 from agents.utils import call_gpt4
 
-def generate_hypothesis(title: str, abstract: str, url: str) -> dict:
-    prompt = f"""
-You are a scientific researcher. Based on the following paper's title and abstract, 
-suggest one or two follow-up research questions or experiments. 
+def generate_hypothesis(cluster_data: dict) -> dict:
+    """
+    accepts a clustering output dict with "theme_summaries" and "contradictions."
 
-Title: {title}
-Abstract: {abstract}
+    returns a list of suggested follow-up research questions or hypothesis.
+    """
+    
+    theme_summaries = cluster_data.get("clusters",{}).get("theme_summaries","")
+    contradictions = cluster_data.get("clusters",{}).get("contradictions","")
+
+    prompt = f"""
+You are a scientific researcher assistant. Given the following thematic summary of several scientific papers
+and a list of contradictions or gaps, suggest 3–5 specific follow-up research questions or hypotheses 
+that could help address unresolved issues, validate uncertain findings, or build on promising directions.
+Please directly reference authors and claims to support suggestions. 
+
+### Thematic Summaries:
+{theme_summaries}
+
+### Contradictions or Gaps:
+{contradictions}
 """
     
     messages = [
@@ -17,7 +31,5 @@ Abstract: {abstract}
     hypothesis = call_gpt4(messages)
 
     return {
-        "title" : title,
-        "url" : url,
-        "hypothesis" : hypothesis
+        "hypothesis" : hypothesis.strip()
     }
