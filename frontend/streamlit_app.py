@@ -1,5 +1,7 @@
 import streamlit as st
 import requests
+import time
+
 
 API_URL = "http://localhost:8000/analyze"
 
@@ -9,37 +11,50 @@ query = st.text_input("Enter a research topic", "glioblastoma")
 limit = st.slider("Number of papers to analyze", 1,20,5)
 
 if st.button("Analyze"):
+    
     with st.spinner("Running multi-agent pipeline..."):
         try:
             response = requests.get(API_URL, params={"query" : query, "limit" : limit})
             response.raise_for_status()
             data = response.json()
 
+            st.header(f"Found Papers: {len(data['papers'])}")
+
             #display summarized papers
             for idx, paper in enumerate(data['papers'], 1):
                 with st.expander(f"**{idx}. {paper['title']}**"):
-                    authors_str = ",".join(paper.get('authors',[])) or "Unknown authors"
+                    authors_str = " ,".join(paper.get('authors',[])) or "Unknown authors"
                     st.markdown(f"**Authors:** {authors_str}")
                     st.markdown(f"**URL:** [{paper['url']}]({paper['url']})")
-                    st.markdown(f"**Summary:** {paper['summary']}")
+                    #st.markdown(f"**Summary:**")
+                    st.markdown(f"{paper['summary']}")
 
-            st.success(f"Found {len(data['clusters'])} Thematic Clusters...")
+
+            st.success(f"Found {len(data['clusters']['clusters'])} Thematic Clusters...")
+            
+            st.header("Clusters")
 
             #display clusters 
             for idx, cluster in enumerate(data['clusters']['clusters'], 1):
-                st.subheader(f"Cluster: {idx}")
-                st.markdown(cluster['theme'])    
+                cluster_theme = cluster.get('theme', "")
+                st.subheader(f"Cluster {idx}: {cluster_theme}")
                 st.markdown(cluster['summary'])
+                st.write("\nPapers:")
+                for paper in cluster["papers"]:
+                    title = paper.get("title", "")
+                    st.markdown(f"- {title}") 
 
-            st.subheader("Contradicitons or Gaps")   
-            contradictions = data['clusters'].get('contradictions', 'No Contradicitons Found')
+            st.header("Contradicitons or Gaps")   
+            contradictions = data['clusters'].get('contradictions_or_gaps', '### No Contradicitons Found')
             if contradictions: 
-                st.write(contradictions)
+                for gap in contradictions:
+                    st.markdown(f"- {gap}")
 
             #display hypothesis
-            st.subheader("Suggested Follow-up Hypothesis")
-            hypothesis = data['follow_up_hypothesis']
-            st.write(hypothesis)
+            st.header("Suggested Follow-up Hypothesis")
+            hypothesis = data.get('follow_up_hypothesis',{})
+            hypothesis_text = hypothesis.get("hypothesis","")
+            st.markdown(hypothesis_text)
 
         except requests.exceptions.RequestException as e:
             st.error(f"API request failed: {e}")

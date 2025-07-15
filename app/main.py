@@ -2,26 +2,22 @@ from agents.extractor_agent import extract_paper_summary
 from agents.hypothesis_agent import generate_hypothesis
 from agents.clustering_agent import cluster_papers
 from paper_search.papersearch import search_papers
-import json
 
 
-def build_pipeline(query:str, num_papers: int = 3) -> dict:
-    print(f"\n Searching for papers about: {query}")
-    papers = search_papers(query, limit=num_papers)
+def build_pipeline(query:str, limit: int = 3) -> dict:
+    print(f"\nSearching for papers about: {query}")
+    papers = search_papers(query, limit=limit)
     print(f"Extracting summaries from {len(papers)} papers... \n")
 
     summarized_papers = []
 
     for i, paper in enumerate(papers, start=1):
-        result = extract_paper_summary(
-            title=paper['title'],
-            abstract=paper['abstract'],
-            url=paper['url']
-        )
+        result = extract_paper_summary(paper)
         summarized_papers.append(result)
 
         print(f"\n=== Paper #{i} ===")
         print(f"Title: {result['title']}")
+        print(f"Authors: {result['authors']}")
         print(f"URL: {result['url']}")
         print(f"\n Extracted Summary:\n{result['summary']}")
         print("\n------------------------\n")
@@ -31,6 +27,7 @@ def build_pipeline(query:str, num_papers: int = 3) -> dict:
 
     print("Generating hypothesis... ")
     hypothesis = generate_hypothesis(clusters)
+    
 
     return {
         "query" : query,
@@ -44,7 +41,23 @@ if __name__=="__main__":
     num_papers = int(input("Enter top number of results: "))
     while not isinstance(num_papers, int): 
         num_papers  = int(input("Enter top number of results: "))
-    output = build_pipeline(topic, num_papers)
-    print(json.dumps(output, indent=2))
+    results = build_pipeline(topic, num_papers)
+    #print(json.dumps(results, indent=2))
 
+    for i, cluster in enumerate(results['clusters']['clusters'], 1):
+        print(f"\n=== Cluster #{i} ===")
+        print(f"Theme: {cluster['theme']}")
+        print(f"Summary: {cluster['summary']}")
+        print(f"\nPapers:")
+        for paper in cluster["papers"]:
+            title = paper.get("title", "")
+            print(f"- {title}")
+    
+    print("\n------------------------\n")
 
+    print(f"\n=== Contradictions or Gaps ===")
+    for gap in results['clusters']['contradictions_or_gaps']:
+        print(f"- {gap}")
+
+    print(f"\n=== Suggested Follow-up Hypothesis ===")
+    print(results.get('follow_up_hypothesis',{}).get('hypothesis'))

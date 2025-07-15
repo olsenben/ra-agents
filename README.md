@@ -1,6 +1,8 @@
 # Multi-Agent Research Assistant System
+![alt text](https://i.imgur.com/lMNDaeT.gif "ra-agents gif")
 
-An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers — generating structured summaries, identifying thematic contradictions, and proposing follow-up experiments.
+
+An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers. It generates structured summaries, identifies thematic contradictions, and proposes follow-up experiments. 
 
 ## Project Goals
 
@@ -28,6 +30,10 @@ Each agent runs independently and collaborates via a central controller.
 
 
 ## RUN
-run API ```uvicorn app.api:app --host 0.0.0.0 --port 8000```
-launch streamlit ```cd frontend``` then ```streamlit run streamlit_app.py``` then navigate to ```http://localhost:8501/```
+- Add your API keys to your .env (example is included)
+- To run API ```uvicorn app.api:app --host 0.0.0.0 --port 8000```
+- To launch streamlit ```cd frontend``` then ```streamlit run streamlit_app.py``` then navigate to ```http://localhost:8501/``` or whichever is specified
+
+**OR**
+- To run via your terminal, run ```main.py```
 

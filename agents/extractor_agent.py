@@ -10,7 +10,7 @@ def extract_paper_summary(paper: dict) -> dict:
 
     prompt = f"""
 You are a scientific assistant. Given the title and abstract of a research paper, 
-extract the main claim and the key methods used. Respond with sub headers claims and methods in markdown format.
+extract the main claim and the key methods used. Respond with headers claims and methods.
 
 Title: {title}
 Abstract: {abstract}

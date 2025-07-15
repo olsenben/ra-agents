@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-api_key = os.getenv("KEEPA_API_KEY")
+api_key = os.getenv("SEMANTIC_SCHOLAR_API_KEY")
 
 
 BASE_URL = 'https://api.semanticscholar.org/graph/v1'

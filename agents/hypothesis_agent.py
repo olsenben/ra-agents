@@ -7,15 +7,16 @@ def generate_hypothesis(cluster_data: dict) -> dict:
     returns a list of suggested follow-up research questions or hypothesis.
     """
     
-    contradictions = cluster_data.get("contradictions","")
+    contradictions = cluster_data.get("contradictions_or_gaps","")
 
     theme_summaries = []
 
-    for cluster in cluster_data.get('clusters', []):
+    for idx, cluster in enumerate(cluster_data.get('clusters', [])):
         theme_summaries.append(
-            f"Title: {cluster['theme']}\n"
-            f"Authors: {cluster['summary']}\n"
-            f"Summary: {cluster['papers']}\n"
+            f"Cluster: {idx}"
+            f"Theme: {cluster['theme']}\n"
+            f"Summary: {cluster['summary']}\n"
+            #f"Papers: {cluster['papers']}\n"
         )
 
     prompt = (
