@@ -1,7 +1,6 @@
 # Multi-Agent Research Assistant System
 ![alt text](https://i.imgur.com/xxUstL8.gif "ra-agents gif")
 
-
 An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers. It generates structured summaries, identifies thematic contradictions, and proposes follow-up experiments. 
 
 ## Project Goals
@@ -35,5 +34,5 @@ Each agent runs independently and collaborates via a central controller.
 - To launch streamlit ```cd frontend``` then ```streamlit run streamlit_app.py``` then navigate to ```http://localhost:8501/``` or whichever is specified
 
 **OR**
-- To run via your terminal, run ```main.py```
+- To run via your terminal, run ```main.py```.
 
