@@ -1,12 +1,16 @@
 import streamlit as st
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 password = st.text_input("Password", type="password")
 if password != st.secrets["STREAMLIT_PASSWORD"]:
     st.stop()
 
-API_URL = "https://ra-agents.fly.dev/"
+API_URL = "https://ra-agents.fly.dev/analyze"
 API_KEY = os.environ.get("FLY_API_TOKEN") 
 
 st.title("Multi-Agent Research Assistant")
