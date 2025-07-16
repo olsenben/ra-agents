@@ -1,5 +1,5 @@
 # Multi-Agent Research Assistant System
-![RA Agents Demo](https://i.imgur.com/xxUstL8.gif) 
+![RA Agents Demo](https://i.imgur.com/1zrpctW.gif) 
 
 An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers. It generates structured summaries, identifies thematic contradictions, and proposes follow-up experiments. 
 

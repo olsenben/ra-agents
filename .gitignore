@@ -1,4 +1,4 @@
 .env
 /frontend/.streamlit/secrets.toml
 fly.toml
-/.github/workflows/fly-deploy.yml
+/.github
