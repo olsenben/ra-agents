@@ -1,9 +1,13 @@
 import streamlit as st
 import requests
-import time
+import os
 
+password = st.text_input("Password", type="password")
+if password != st.secrets["STREAMLIT_PASSWORD"]:
+    st.stop()
 
-API_URL = "http://localhost:8000/analyze"
+API_URL = "https://ra-agents.fly.dev/"
+API_KEY = os.environ.get("FLY_API_TOKEN") 
 
 st.title("Multi-Agent Research Assistant")
 
@@ -14,7 +18,16 @@ if st.button("Analyze"):
     
     with st.spinner("Running multi-agent pipeline..."):
         try:
-            response = requests.get(API_URL, params={"query" : query, "limit" : limit})
+            response = requests.get(
+                API_URL, 
+                params={
+                    "query" : query,
+                    "limit" : limit
+                    },
+                headers = {
+                    "X-API-Key": API_KEY
+                    })
+            
             response.raise_for_status()
             data = response.json()
 
