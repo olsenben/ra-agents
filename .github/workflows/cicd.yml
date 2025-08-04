@@ -1,0 +1,58 @@
+name: CI Pipeline with Docker Compose
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: Docker Compose Integration Test
+    runs-on: ubuntu-latest
+    env:
+        REDIS_URL: redis://localhost:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: docker-compose up -d --build
+
+      - name: Wait for services to be healthy
+        run: |
+            timeout=30
+            while [[ "$(docker inspect -f '{{.State.Health.Status}}' ra-backend)" != "healthy" && $timeout -gt 0 ]]; do
+            sleep 2
+            timeout=$((timeout - 2))
+            done
+
+      - name: Run tests in API container
+        run: docker-compose exec -T api pytest
+
+      - name: Tear down
+        run: docker-compose down
+
+  deploy: 
+    name: Deploy to EC2
+    needs: test 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy files to EC2
+        run: |
+          scp -i ${{ secrets.EC2_SSH_KEY }} -o StrictHostKeyChecking=no \
+          -r docker-compose.prod.yml backend frontend ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/ra-agents
+
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -i ${{ secrets.EC2_SSH_KEY }} -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+            cd /home/ubuntu/ra-agents
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml up -d --build
+          EOF
+
