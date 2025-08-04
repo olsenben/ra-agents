@@ -22,10 +22,12 @@ Each agent runs independently and collaborates via a central controller.
 
 - **LLM Backend**: OpenAI GPT-4
 - **Orchestration**: Custom
-- **Memory Store**: None for now
+- **Memory Store**: MongoDB
 - **Containerization**: Docker
-- **Backend**: FastAPI
+- **Backend**: FastAPI, pydantic (schema validation), aioredis (rate limiting)
 - **Frontend**: Streamlit
+- **Auth**: Firebase
+
 
 
 ## RUN

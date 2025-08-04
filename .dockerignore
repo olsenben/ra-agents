@@ -2,3 +2,6 @@
 **\.env
 fly.toml
 /frontend/.streamlit/secrets.toml
+.git
+__pycache__
+ra-agents.pem

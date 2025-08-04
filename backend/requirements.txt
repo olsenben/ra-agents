@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+openai
+requests
+streamlit
+pymongo[srv]==3.12
+pyrebase4
+firebase_admin
+fastapi_limiter
+aioredis
+pytest
+dotenv

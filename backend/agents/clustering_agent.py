@@ -1,4 +1,3 @@
-import re
 import json
 from difflib import get_close_matches
 from agents.utils import call_gpt4

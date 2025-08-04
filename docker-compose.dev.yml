@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  backend:
+    env_file:
+      - ./env
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.api
+
+    container_name: ra-backend
+    volumes: 
+      - ./backend:/app
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+    command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+
+  redis:
+    image: redis:7-alpine
+    container_name: ra-redis
+    ports:
+      - "6379:6379"
+
+  frontend:
+    env_file:
+      - ./env
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: ra-frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
