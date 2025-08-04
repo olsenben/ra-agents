@@ -1,6 +1,5 @@
 .env
 /frontend/.streamlit/secrets.toml
 fly.toml
-/.github
 /app/secrets/
 ra-agents.pem
