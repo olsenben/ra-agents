@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir -p frontend
           cat <<EOF > frontend/.env
-          FIREBASE_API_KEY=${{ secrets.AIzaSyBhSSnLkRHJHwlL9gQ4c-Em6F1vnzDoApM }}
+          FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
           EOF
 
       - name: Install Docker Compose CLI plugin
@@ -89,12 +89,13 @@ jobs:
 
       - name: Copy files to EC2
         run: |
-          scp -i ${{ secrets.EC2_SSH_KEY }} -o StrictHostKeyChecking=no \
-            -r docker-compose.prod.yml backend frontend ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/ra-agents
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          scp -i key.pem -o StrictHostKeyChecking=no -r docker-compose.prod.yml backend frontend ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/ra-agents
 
       - name: Deploy with Docker Compose
         run: |
-          ssh -i ${{ secrets.EC2_SSH_KEY }} -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/ra-agents
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml up -d --build
