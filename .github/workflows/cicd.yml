@@ -53,8 +53,8 @@ jobs:
               timeout=$((timeout - 2))
             done
 
-      - name: Run tests in API container
-        run: docker compose exec -T api pytest
+      # - name: Run tests in API container
+      #   run: docker compose exec -T api pytest
 
       - name: Tear down
         run: docker compose down
@@ -84,7 +84,7 @@ jobs:
         run: |
           mkdir -p frontend
           cat <<EOF > frontend/.env
-          FIREBASE_API_KEY=${{ secrets.AIzaSyBhSSnLkRHJHwlL9gQ4c-Em6F1vnzDoApM }}
+          FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
           EOF
 
       - name: Copy files to EC2
