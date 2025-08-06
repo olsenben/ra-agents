@@ -5,3 +5,4 @@ fly.toml
 .git
 __pycache__
 ra-agents.pem
+.env.example

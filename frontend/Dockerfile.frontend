@@ -1,20 +1,27 @@
 FROM python:3.10-slim
 
+#create a non-root user BEFORE chown
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
+# create home directory with right permissions
+RUN mkdir -p /home/appuser && chown -R appuser:appuser /home/appuser
 
 # Set working directory
 WORKDIR /app
 
-# Install Python dependencies
-COPY ./requirements.txt ./requirements.txt
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
-
 # Copy source code
 COPY . .
 
-# Change ownership (optional if everything is copied as root)
-RUN chown -R appuser:appuser /app
+COPY ./requirements.txt ./requirements.txt
+
+# Install Python dependencies
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
+# Set environment variable to avoid writing to /home/appuser
+ENV STREAMLIT_HOME=/app/streamlit
+
+#Create the streamlit directory before switching to non-root
+RUN mkdir -p /app/streamlit && chown -R appuser:appuser /app/streamlit
 
 # Switch to the non-root user
 USER appuser

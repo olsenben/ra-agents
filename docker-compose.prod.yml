@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   backend:
     env_file:
@@ -29,6 +28,8 @@ services:
       - "6379:6379"
 
   frontend:
+    environment:
+      - STREAMLIT_HOME=/app/streamlit
     env_file:
       - ./frontend/.env
     build:

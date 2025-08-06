@@ -30,16 +30,15 @@ services:
       - "6379:6379"
 
   frontend:
+    image: my-org/ra-frontend:latest 
+    container_name: ra-frontend
     env_file:
       - ./env
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.frontend
-    container_name: ra-frontend
-    volumes:
-      - ./frontend:/app
+    environment:
+      - STREAMLIT_HOME=/tmp/streamlit
     ports:
       - "8501:8501"
     depends_on:
       - backend
-    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
+    command: >
+      sh -c "mkdir -p /tmp/streamlit && streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0"
