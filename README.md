@@ -16,7 +16,7 @@ This system uses a team of large language model agents:
 - `ClusteringAgent`: identifies topic clusters and conflicting findings
 - `HypothesisAgent`: generates new questions or experimental ideas
 
-Each agent runs independently and collaborates via a central controller.
+Each agent runs independently and collaborates via a central controller (custom orchestration).
 
 ## Technologies
 
@@ -27,7 +27,7 @@ Each agent runs independently and collaborates via a central controller.
 - **Backend**: FastAPI, pydantic (schema validation), aioredis (rate limiting)
 - **Frontend**: Streamlit
 - **Auth**: Firebase
-- **Hosting**: AWS EC2
+- **Deployment**: AWS EC2
 
 
 
