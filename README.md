@@ -1,7 +1,7 @@
 # Multi-Agent Research Assistant System
 ![RA Agents Demo](https://i.imgur.com/vdE9Ezb.gif) 
 
-An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers. It generates structured summaries, identifies thematic contradictions, and proposes follow-up experiments. 
+An autonomous LLM-powered agent team designed to extract, cluster, and reason over scientific papers. It generates structured summaries, identifies thematic contradictions, and proposes follow-up experiments. The deployed version of this app is available here (until my aws credits run out): http://3.16.161.72:8501/
 
 ## Project Goals
 
@@ -23,10 +23,11 @@ Each agent runs independently and collaborates via a central controller.
 - **LLM Backend**: OpenAI GPT-4
 - **Orchestration**: Custom
 - **Memory Store**: MongoDB
-- **Containerization**: Docker
+- **Containerization**: Docker-compose
 - **Backend**: FastAPI, pydantic (schema validation), aioredis (rate limiting)
 - **Frontend**: Streamlit
 - **Auth**: Firebase
+- **Hosting**: AWS EC2
 
 
 
